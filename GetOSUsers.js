@@ -7,14 +7,14 @@ var data = {
     "domainName": "openspecimen"
 } 
 
+function getAllUsers() {
+  var getAllUsers = UrlFetchApp.fetch(API_URL);
+  Logger.log(getAllUsers.getContentText());
+}
+
 function MainFunction() {
   var options = {method : "post", contentType:"application/json", payload : JSON.stringify(data),"muteHttpExceptions":true};
   var response = UrlFetchApp.fetch(AUTH_URL, options);
   Logger.log(response.getContentText());  
   getAllUsers();
-}
-
-function getAllUsers() {
-  var getAllUsers = UrlFetchApp.fetch(API_URL);
-  Logger.log(getAllUsers.getContentText());
 }
