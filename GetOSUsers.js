@@ -16,5 +16,5 @@ function MainFunction() {
   var options = {method : "post", contentType:"application/json", payload : JSON.stringify(data),"muteHttpExceptions":true};
   var response = UrlFetchApp.fetch(AUTH_URL, options);
   Logger.log(response.getContentText());  
-  getAllUsers();
+  //getAllUsers();
 }
