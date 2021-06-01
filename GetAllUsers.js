@@ -1,38 +1,50 @@
-var API_URL = "https://test.openspecimen.org/rest/ng/users";
-var USERNAME = "kaustubh";
+var API_URL = "https://demo.openspecimen.org/rest/ng/users";
+var USERNAME = "kaustubh@krishagni.com";
 var PASSWORD = "Login@123";
+var SHEETNAME = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('sheet1');
 
 var encodedAuthInformation = Utilities.base64Encode(USERNAME+":"+PASSWORD);
 var headers = {"Authorization" : "Basic " + encodedAuthInformation};
 
-function getAllUsers() {
+function writeInGSheet(userData) {
+  var userHeader = ["id","firstName","lastName","emailAddress"]
+  var items = [userHeader];
+  userData.forEach(function (userData) {
+    items.push([userData.id, userData.firstName, userData.lastName,userData.emailAddress]);
+  });
+  SHEETNAME.getRange(1,1,items.length,items[0].length).setValues(items);
+  Logger.log("OpenSpecimen users are successfully loaded in google sheet.");
+
+  if(encodedAuthInformation!=null || headers != null ) {
+    encodedAuthInformation = null;
+    headers = null;
+  }
+  sortSheetDescending(SHEETNAME);
+}
+
+function sortSheetDescending(sheetName) {
+  sheetName.setFrozenRows(1);
+  sheetName.getRange('1:1000').sort({column: 1, ascending: false});
+  Logger.log("The sheet is sorted in descending order successfully.");
+  //sheetName.deleteColumn(1);
+}
+
+/*********************************/
+/*   Script starts from here.    */
+/*********************************/
+function mainFunction() {
   var params = {
     'method': 'GET',
     'muteHttpExceptions': true,
     'headers': headers
   };
-  
   var response=UrlFetchApp.fetch(API_URL, params); 
   var AllUsersData = JSON.parse(response.getContentText());
   writeInGSheet(AllUsersData);
 }
 
-function writeInGSheet(Data) {
-  var results = Data;
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetName=sheet.getSheetByName('Sheet2');
-  
-  var userHeader = ["id","type","firstName","lastName","loginName","domain","emailAddress","instituteId","instituteName","admin","instituteAdmin","manageForms","cpCount","creationDate","activityStatus"]
-  
-  var items = [userHeader];
-sheet
-  results.forEach(function (result) {
-      items.push([result.id, result.type, result.firstName, result.lastName,result.loginName, result.domain, result.emailAddress,result.instituteId, result.instituteName, result.admin, result.instituteAdmin, result.manageForms,result.cpCount, result.creationDate, result.activityStatus]);
-  });
-  sheetName.getRange(1,1,items.length,items[0].length).setValues(items);
-  Logger.log("OpenSpecimen Users are successfully loaded in google Sheet");
-}
-  
+
+
   
 
 
